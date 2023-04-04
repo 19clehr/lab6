@@ -1,6 +1,12 @@
 	;; UART0_handler
 
 	;; clear interrupt
+		MOV r1, #0xC000
+		MOVT r1, #0x4000
+
+		LDRB r0, [r1,#0x038]
+		ORR r0, r0, #0x10 ;store bit 4 (5th bit) with 1
+		STRB r0, [r1, #0x038]
 
 	;; read character
 
@@ -41,6 +47,40 @@ right:
 	ORR r1, r1, #0x1 	; write a 1 to TATOCINT bit
 	STR r1, [r0, #0x024] 	; store back inot GPTMICR
 
+	LDR r6, location_ptr ;this might be needed in main routine
+
+	MOV r0, #0x20 ; ascii space
+	MOV r1, #0x2a ; ascii *
+
+	STR r0, [r6]
+moveUp:
+	sub r6, r6, #24
+	B exitTimer
+
+moveLeft:
+	sub r6, r6, #1
+	B exitTimer
+
+
+moveDown:
+	add r6, r6, #24
+	B exitTimer
+
+moveRight:
+	add r6, r6, #1
+	B exitTimer
+
+exitTimer:
+	STR r1, [r6]
+
+	; you can either print string here or in lab6 routine
+	MOV r0, #0xC ;clear screen
+	output_character
+	MOV r0, r4 ;r4 holds game board pointer
+	output_string 
+
+
+BX lr
 	;;
 
 
