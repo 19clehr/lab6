@@ -48,11 +48,24 @@ right:
 	STR r1, [r0, #0x024] 	; store back inot GPTMICR
 
 	LDR r6, location_ptr ;this might be needed in main routine
-
+	LDR r4, direction_ptr ;this might need to be done in main routine ; load direction piece is going in
 	MOV r0, #0x20 ; ascii space
 	MOV r1, #0x2a ; ascii *
 
 	STR r0, [r6]
+
+	CMP r4, #2
+	BEQ moveUp
+
+	CMP r4, #1
+	BEQ moveLeft
+
+	CMP r4, #3
+	BEQ moveDown
+
+	CMP r4, #0
+	BEQ moveRight
+
 moveUp:
 	sub r6, r6, #24
 	B exitTimer
